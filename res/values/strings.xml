@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+	<!--
+		Copyright (C) 2010 Felix Bechstein
+	-->
+	<!--
+		This file is part of WebSMS. This program is free software; you can
+		redistribute it and/or modify it under the terms of the GNU General
+		Public License as published by the Free Software Foundation; either
+		version 3 of the License, or (at your option) any later version.
+	-->
+	<!--
+		This program is distributed in the hope that it will be useful, but
+		WITHOUT ANY WARRANTY; without even the implied warranty of
+		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+		General Public License for more details. You should have received a
+		copy of the GNU General Public License along with this program; If
+		not, see <http://www.gnu.org/licenses/>.
+	-->
+<resources>
+	<string name="app_name">WebSMS Connector: discotel</string>
+	<string name="app_version">1.0</string>
+	<string name="connector_discotel_author">Felix Bechstein &lt;f@ub0r.de&gt;</string>
+	<string name="connector_discotel_name">discotel</string>
+	<string name="enable_discotel">Enable discotel</string>
+	<string name="settings_discotel">Preferences - discotel</string>
+	<string name="use_default_for_login_">Login with default</string>
+	<string name="use_default_for_login_hint">Use default number for login.</string>
+</resources>
