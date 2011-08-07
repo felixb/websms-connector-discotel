@@ -50,26 +50,42 @@ public class ConnectorDiscotel extends Connector {
 	/** Preference's name: Use default number for login. */
 	private static final String PREFS_LOGIN_WTIH_DEFAULT = "login_with_default";
 
-	/** Discotel URL: login. */
-	private static final String URL_LOGIN = // .
+	/** Discoplus URL: login. */
+	private static final String URL_DP_LOGIN = // .
 	"https://service.discoplus.de/frei/LOGIN";
 	/** Destination for login. */
-	private static final String LOGIN_DEST = "/discoplus/index3.php";
-	/** Discotel URL: send. */
-	private static final String URL_SEND = // .
+	private static final String LOGIN_DP_DEST = "/discoplus/index3.php";
+	/** Discoplus URL: send. */
+	private static final String URL_DP_SEND = // .
 	"https://service.discoplus.de/discoplus/sms-neu.php";
 
 	/** Check for login. */
-	private static final String CHECK_LOGIN = "sms-neu.php";
+	private static final String CHECK_DP_LOGIN = "sms-neu.php";
 	/** Check for balance. */
-	private static final String CHECK_BALANCE1 = "prepaid Guthaben:";
+	private static final String CHECK_DP_BALANCE1 = "prepaid Guthaben:";
 	/** Check for balance. */
-	private static final String CHECK_BALANCE2 = " kostenlose SMS ";
+	private static final String CHECK_DP_BALANCE2 = " kostenlose SMS ";
 	/** Check for sent. */
-	private static final String CHECK_SENT = "Ihre SMS wurde versendet";
+	private static final String CHECK_DP_SENT = "Ihre SMS wurde versendet";
+
+	/** Discotel URL: login. */
+	private static final String URL_DT_LOGIN = // .
+	"https://lounge.discoplus.de/login";
+	/** Discotel URL: send. */
+	private static final String URL_DT_SEND = // .
+	"https://lounge.discoplus.de/sms_service";
+	/** Check for login. */
+	private static final String CHECK_DT_LOGIN = "Ihre Kundennummer lautet";
+	/** Check for balance. */
+	private static final String CHECK_DT_BALANCE1 = "nnen in diesem Monat noch";
+	/** Check for sent. */
+	private static final String CHECK_DT_SENT = // .
+	"Ihre SMS wurde erfolgreich versendet";
+	/** Max length for discotel sms. */
+	private static final int MAXLENGTH = 101;
 
 	/** Number of vars pushed at login. */
-	private static final int NUM_VARS_LOGIN = 3;
+	private static final int NUM_VARS_LOGIN = 4;
 	/** Number of vars pushed at send. */
 	private static final int NUM_VARS_SEND = 6;
 
@@ -124,7 +140,7 @@ public class ConnectorDiscotel extends Connector {
 	}
 
 	/**
-	 * Login to discotel.de.
+	 * Login to service.discoplus.de.
 	 * 
 	 * @param context
 	 *            {@link Context}
@@ -133,14 +149,14 @@ public class ConnectorDiscotel extends Connector {
 	 * @throws IOException
 	 *             IOException
 	 */
-	private void doLogin(final Context context, final ConnectorCommand command)
-			throws IOException {
+	private void dpDoLogin(final Context context, // .
+			final ConnectorCommand command) throws IOException {
 		final SharedPreferences p = PreferenceManager
 				.getDefaultSharedPreferences(context);
 
 		ArrayList<BasicNameValuePair> postData = // .
 		new ArrayList<BasicNameValuePair>(NUM_VARS_LOGIN);
-		postData.add(new BasicNameValuePair("destination", LOGIN_DEST));
+		postData.add(new BasicNameValuePair("destination", LOGIN_DP_DEST));
 		String genlogin;
 		if (p.getBoolean(PREFS_LOGIN_WTIH_DEFAULT, false)) {
 			genlogin = command.getDefSender();
@@ -156,8 +172,8 @@ public class ConnectorDiscotel extends Connector {
 		postData.add(new BasicNameValuePair("credential_1", p.getString(
 				Preferences.PREFS_PASSWORD, "")));
 
-		HttpResponse response = Utils.getHttpClient(URL_LOGIN, null, postData,
-				TARGET_AGENT, null, ENCODING, TRUSTED_CERTS);
+		HttpResponse response = Utils.getHttpClient(URL_DP_LOGIN, null, // .
+				postData, TARGET_AGENT, null, ENCODING, TRUSTED_CERTS);
 		postData = null;
 		int resp = response.getStatusLine().getStatusCode();
 		if (resp != HttpURLConnection.HTTP_OK) {
@@ -168,14 +184,14 @@ public class ConnectorDiscotel extends Connector {
 		Log.d(TAG, htmlText);
 		Log.d(TAG, "----HTTP RESPONSE---");
 
-		if (!htmlText.contains(CHECK_LOGIN)) {
+		if (!htmlText.contains(CHECK_DP_LOGIN)) {
 			Utils.clearCookies();
 			throw new WebSMSException(context, R.string.error_pw);
 		}
 
 		// update balance
 		String balance = "";
-		int i = htmlText.indexOf(CHECK_BALANCE1);
+		int i = htmlText.indexOf(CHECK_DP_BALANCE1);
 		if (i > 0) {
 			htmlText = htmlText.substring(i, htmlText.indexOf(" EUR", i));
 			Log.d(TAG, htmlText);
@@ -185,7 +201,7 @@ public class ConnectorDiscotel extends Connector {
 		}
 
 		// update free balance
-		response = Utils.getHttpClient(URL_SEND, null, null, TARGET_AGENT,
+		response = Utils.getHttpClient(URL_DP_SEND, null, null, TARGET_AGENT,
 				null, ENCODING, TRUSTED_CERTS);
 
 		resp = response.getStatusLine().getStatusCode();
@@ -198,7 +214,7 @@ public class ConnectorDiscotel extends Connector {
 		Log.d(TAG, htmlText);
 		Log.d(TAG, "----HTTP RESPONSE---");
 
-		i = htmlText.indexOf(CHECK_BALANCE2);
+		i = htmlText.indexOf(CHECK_DP_BALANCE2);
 		if (i < 0) {
 			Utils.clearCookies();
 			throw new WebSMSException(context, R.string.error);
@@ -227,7 +243,7 @@ public class ConnectorDiscotel extends Connector {
 	}
 
 	/**
-	 * Send text.
+	 * Send text via service.discoplus.de.
 	 * 
 	 * @param context
 	 *            {@link Context}
@@ -236,11 +252,11 @@ public class ConnectorDiscotel extends Connector {
 	 * @throws IOException
 	 *             IOException
 	 */
-	private void sendText(final Context context, final ConnectorCommand command)
-			throws IOException {
+	private void dpSendText(final Context context,
+			final ConnectorCommand command) throws IOException {
 		final int cc = Utils.getCookieCount();
 		if (cc == 0) {
-			this.doLogin(context, command);
+			this.dpDoLogin(context, command);
 		}
 		String number = Utils.national2international(command.getDefPrefix(),
 				Utils.getRecipientsNumber(command.getRecipients()[0]));
@@ -264,8 +280,8 @@ public class ConnectorDiscotel extends Connector {
 		postData.add(new BasicNameValuePair("unteraction", "abschicken"));
 
 		HttpResponse response = Utils.getHttpClient(Utils.httpGetParams(
-				URL_SEND, postData, ENCODING), null, null, TARGET_AGENT,
-				URL_SEND, ENCODING, TRUSTED_CERTS);
+				URL_DP_SEND, postData, ENCODING), null, null, TARGET_AGENT,
+				URL_DP_SEND, ENCODING, TRUSTED_CERTS);
 		postData = null;
 		final int resp = response.getStatusLine().getStatusCode();
 		if (resp != HttpURLConnection.HTTP_OK) {
@@ -276,10 +292,119 @@ public class ConnectorDiscotel extends Connector {
 		Log.d(TAG, htmlText);
 		Log.d(TAG, "----HTTP RESPONSE---");
 
-		final int i = htmlText.indexOf(CHECK_SENT);
+		final int i = htmlText.indexOf(CHECK_DP_SENT);
 		if (i < 0) {
 			Log.e(TAG, "failed to send message, response following:");
 			Log.e(TAG, htmlText);
+			throw new WebSMSException(context, R.string.error);
+		}
+	}
+
+	/**
+	 * Login to lounge.discoplus.de.
+	 * 
+	 * @param context
+	 *            {@link Context}
+	 * @param command
+	 *            {@link ConnectorCommand}
+	 * @throws IOException
+	 *             IOException
+	 */
+	private void dtDoLogin(final Context context, // .
+			final ConnectorCommand command) throws IOException {
+		final SharedPreferences p = PreferenceManager
+				.getDefaultSharedPreferences(context);
+
+		ArrayList<BasicNameValuePair> postData = // .
+		new ArrayList<BasicNameValuePair>(NUM_VARS_LOGIN);
+		postData.add(new BasicNameValuePair("do", "login"));
+		postData.add(new BasicNameValuePair("goto", ""));
+		postData.add(new BasicNameValuePair("loginname", p.getString(
+				Preferences.PREFS_USERNAME, "")));
+		postData.add(new BasicNameValuePair("password", p.getString(
+				Preferences.PREFS_PASSWORD, "")));
+
+		HttpResponse response = Utils.getHttpClient(URL_DT_LOGIN, null, // .
+				postData, TARGET_AGENT, URL_DT_LOGIN, ENCODING, TRUSTED_CERTS);
+		postData = null;
+		int resp = response.getStatusLine().getStatusCode();
+		if (resp != HttpURLConnection.HTTP_OK) {
+			throw new WebSMSException(context, R.string.error_http, "" + resp);
+		}
+		String htmlText = Utils.stream2str(response.getEntity().getContent());
+		Log.d(TAG, "----HTTP RESPONSE---");
+		Log.d(TAG, htmlText);
+		Log.d(TAG, "----HTTP RESPONSE---");
+
+		if (!htmlText.contains(CHECK_DT_LOGIN)) {
+			Utils.clearCookies();
+			throw new WebSMSException(context, R.string.error_pw);
+		}
+
+		// update balance
+		String balance = "";
+		int i = htmlText.indexOf(CHECK_DT_BALANCE1);
+		if (i > 0) {
+			htmlText = htmlText.substring(i, htmlText.indexOf("SMS", i));
+			Log.d(TAG, htmlText);
+			htmlText = htmlText.substring(htmlText.indexOf(">") + 1);
+			balance = htmlText.substring(0, htmlText.indexOf("<"));
+			Log.d(TAG, "balance: " + balance);
+		}
+
+		Log.d(TAG, "balance: " + balance);
+		this.getSpec(context).setBalance(balance);
+	}
+
+	/**
+	 * Send text via service.discoplus.de.
+	 * 
+	 * @param context
+	 *            {@link Context}
+	 * @param command
+	 *            {@link ConnectorCommand}
+	 * @throws IOException
+	 *             IOException
+	 */
+	private void dtSendText(final Context context,
+			final ConnectorCommand command) throws IOException {
+		if (command.getText().length() > MAXLENGTH) {
+			throw new WebSMSException(context, R.string.error_length_101);
+		}
+		final int cc = Utils.getCookieCount();
+		if (cc == 0) {
+			this.dtDoLogin(context, command);
+		}
+		String number = Utils.national2international(command.getDefPrefix(),
+				Utils.getRecipientsNumber(command.getRecipients()[0]));
+		Log.d(TAG, "number: " + number);
+
+		ArrayList<BasicNameValuePair> postData = // .
+		new ArrayList<BasicNameValuePair>(NUM_VARS_SEND);
+		postData.add(new BasicNameValuePair("submit_sms", "SMS versenden"));
+		postData.add(new BasicNameValuePair("confirm_agb", "1"));
+		postData.add(new BasicNameValuePair("sender", number));
+		postData.add(new BasicNameValuePair("message", command.getText()));
+		postData.add(new BasicNameValuePair("receiver", Utils
+				.cleanRecipient(command.getRecipients()[0])));
+
+		HttpResponse response = Utils.getHttpClient(URL_DT_SEND, null,
+				postData, TARGET_AGENT, URL_DT_SEND, ENCODING, TRUSTED_CERTS);
+		postData = null;
+		final int resp = response.getStatusLine().getStatusCode();
+		if (resp != HttpURLConnection.HTTP_OK) {
+			throw new WebSMSException(context, R.string.error_http, "" + resp);
+		}
+		String htmlText = Utils.stream2str(response.getEntity().getContent());
+		Log.d(TAG, "----HTTP RESPONSE---");
+		Log.d(TAG, htmlText);
+		Log.d(TAG, "----HTTP RESPONSE---");
+
+		final int i = htmlText.indexOf(CHECK_DT_SENT);
+		if (i < 0) {
+			Log.e(TAG, "failed to send message, response following:");
+			Log.e(TAG, htmlText);
+			System.out.println(htmlText);
 			throw new WebSMSException(context, R.string.error);
 		}
 	}
@@ -290,7 +415,12 @@ public class ConnectorDiscotel extends Connector {
 	@Override
 	protected final void doUpdate(final Context context, final Intent intent) {
 		try {
-			this.doLogin(context, new ConnectorCommand(intent));
+			String url = Preferences.getService(context);
+			if (url.contains("service.discoplus.de")) {
+				this.dpDoLogin(context, new ConnectorCommand(intent));
+			} else {
+				this.dtDoLogin(context, new ConnectorCommand(intent));
+			}
 		} catch (IOException e) {
 			Log.e(TAG, "login failed", e);
 			throw new WebSMSException(e.toString());
@@ -303,7 +433,12 @@ public class ConnectorDiscotel extends Connector {
 	@Override
 	protected final void doSend(final Context context, final Intent intent) {
 		try {
-			this.sendText(context, new ConnectorCommand(intent));
+			String url = Preferences.getService(context);
+			if (url.contains("service.discoplus.de")) {
+				this.dpSendText(context, new ConnectorCommand(intent));
+			} else {
+				this.dtSendText(context, new ConnectorCommand(intent));
+			}
 		} catch (IOException e) {
 			Log.e(TAG, "send failed", e);
 			throw new WebSMSException(e.toString());

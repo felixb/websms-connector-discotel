@@ -20,9 +20,15 @@
 	android:title="@string/settings_discotel">
 	<CheckBoxPreference android:key="enable_discotel"
 		android:title="@string/enable_discotel" />
+	<ListPreference android:key="etelon_service"
+		android:dependency="enable_discotel" android:title="@string/etelon_service_"
+		android:summary="@string/etelon_service_hint" android:entries="@array/services_"
+		android:entryValues="@array/services" />
+	<EditTextPreference android:key="username_discotel"
+		android:title="@string/username_" android:dependency="enable_discotel" />
 	<EditTextPreference android:key="password_discotel"
 		android:inputType="textPassword" android:title="@string/password_"
-		android:dialogTitle="@string/password_" android:dependency="enable_discotel" />
+		android:dependency="enable_discotel" />
 	<CheckBoxPreference android:key="use_default_sender"
 		android:defaultValue="true" android:title="@string/use_derfault_sender_"
 		android:summary="@string/use_derfault_sender_hint"

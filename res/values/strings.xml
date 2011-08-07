@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 	<!--
-		Copyright (C) 2010 Felix Bechstein
+		Copyright (C) 2010-2011 Felix Bechstein
 	-->
 	<!--
 		This file is part of WebSMS. This program is free software; you can
@@ -25,4 +25,11 @@
 	<string name="settings_discotel">Preferences - discotel</string>
 	<string name="use_default_for_login_">Login with default</string>
 	<string name="use_default_for_login_hint">Use default number for login.</string>
+	<string name="etelon_service_">etelon service</string>
+	<string name="etelon_service_hint">Select your etelon service.</string>
+	<string name="error_length_101">Only 101 characters allowed!</string>
+	<string-array name="services_">
+		<item>Discoplus: service.discoplus.de</item>
+		<item>Discotel: lounge.discoplus.de</item>
+	</string-array>
 </resources>

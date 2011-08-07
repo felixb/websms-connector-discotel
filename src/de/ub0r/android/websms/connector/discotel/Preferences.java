@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Felix Bechstein
+ * Copyright (C) 2010-2011 Felix Bechstein
  * 
  * This file is part of WebSMS.
  * 
@@ -18,19 +18,30 @@
  */
 package de.ub0r.android.websms.connector.discotel;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceActivity;
+import android.preference.Preference;
+import android.preference.PreferenceManager;
+import android.preference.Preference.OnPreferenceChangeListener;
+import de.ub0r.android.websms.connector.common.ConnectorPreferenceActivity;
+import de.ub0r.android.websms.connector.common.Log;
 
 /**
  * Preferences.
  * 
  * @author flx
  */
-public final class Preferences extends PreferenceActivity {
+public final class Preferences extends ConnectorPreferenceActivity implements
+		OnPreferenceChangeListener {
 	/** Preference key: enabled. */
 	static final String PREFS_ENABLED = "enable_discotel";
+	/** Preference's name: user's login. */
+	static final String PREFS_USERNAME = "username_discotel";
 	/** Preference's name: user's password. */
 	static final String PREFS_PASSWORD = "password_discotel";
+	/** Preference's name: etelon service. */
+	static final String PRES_SERVICE = "etelon_service";
 
 	/**
 	 * {@inheritDoc}
@@ -39,5 +50,54 @@ public final class Preferences extends PreferenceActivity {
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.addPreferencesFromResource(R.xml.prefs);
+		Preference pref = this.findPreference(PRES_SERVICE);
+		pref.setOnPreferenceChangeListener(this);
+		SharedPreferences p = PreferenceManager
+				.getDefaultSharedPreferences(this);
+		if (p.getBoolean(PREFS_ENABLED, false)) {
+			this.onPreferenceChange(pref, Preferences.getService(p));
+		} else {
+			this.findPreference(PREFS_USERNAME).setEnabled(false);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean onPreferenceChange(final Preference preference,
+			final Object newValue) {
+		Log.d("dicotel.prefs", "key: " + preference.getKey());
+		Log.d("dicotel.prefs", "val: " + newValue);
+		if (preference.getKey().equals(PRES_SERVICE)) {
+			String s = (String) newValue;
+			this.findPreference(PREFS_USERNAME).setEnabled(
+					!s.contains("service.discoplus.de"));
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Get selected service.
+	 * 
+	 * @param context
+	 *            {@link Context}
+	 * @return service
+	 */
+	static String getService(final Context context) {
+		return getService(PreferenceManager
+				.getDefaultSharedPreferences(context));
+	}
+
+	/**
+	 * Get selected service.
+	 * 
+	 * @param p
+	 *            {@link SharedPreferences}
+	 * @return service
+	 */
+	static String getService(final SharedPreferences p) {
+		return p.getString(Preferences.PRES_SERVICE, "service.discoplus.de");
 	}
 }
