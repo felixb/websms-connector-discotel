@@ -157,12 +157,7 @@ public class ConnectorDiscotel extends Connector {
 		ArrayList<BasicNameValuePair> postData = // .
 		new ArrayList<BasicNameValuePair>(NUM_VARS_LOGIN);
 		postData.add(new BasicNameValuePair("destination", LOGIN_DP_DEST));
-		String genlogin;
-		if (p.getBoolean(PREFS_LOGIN_WTIH_DEFAULT, false)) {
-			genlogin = command.getDefSender();
-		} else {
-			genlogin = Utils.getSender(context, command.getDefSender());
-		}
+		String genlogin = Utils.getSender(context, command.getDefSender());
 		Log.d(TAG, "genlogin:  " + genlogin);
 		genlogin = Utils.international2national(command.getDefPrefix(),
 				genlogin);
@@ -379,11 +374,14 @@ public class ConnectorDiscotel extends Connector {
 				Utils.getRecipientsNumber(command.getRecipients()[0]));
 		Log.d(TAG, "number: " + number);
 
+		String sender = Utils.getSender(context, command.getDefSender());
+		Log.d(TAG, "sender:  " + sender);
+
 		ArrayList<BasicNameValuePair> postData = // .
 		new ArrayList<BasicNameValuePair>(NUM_VARS_SEND);
 		postData.add(new BasicNameValuePair("submit_sms", "SMS versenden"));
 		postData.add(new BasicNameValuePair("confirm_agb", "1"));
-		postData.add(new BasicNameValuePair("sender", number));
+		postData.add(new BasicNameValuePair("sender", sender));
 		postData.add(new BasicNameValuePair("message", command.getText()));
 		postData.add(new BasicNameValuePair("receiver", Utils
 				.cleanRecipient(command.getRecipients()[0])));

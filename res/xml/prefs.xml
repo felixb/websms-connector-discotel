@@ -23,7 +23,7 @@
 	<ListPreference android:key="etelon_service"
 		android:dependency="enable_discotel" android:title="@string/etelon_service_"
 		android:summary="@string/etelon_service_hint" android:entries="@array/services_"
-		android:entryValues="@array/services" />
+		android:entryValues="@array/services" android:defaultValue="https://service.discoplus.de" />
 	<EditTextPreference android:key="username_discotel"
 		android:title="@string/username_" android:dependency="enable_discotel" />
 	<EditTextPreference android:key="password_discotel"
