@@ -47,9 +47,6 @@ public class ConnectorDiscotel extends Connector {
 	/** Tag for output. */
 	private static final String TAG = "discotel";
 
-	/** Preference's name: Use default number for login. */
-	private static final String PREFS_LOGIN_WTIH_DEFAULT = "login_with_default";
-
 	/** Discoplus URL: login. */
 	private static final String URL_DP_LOGIN = // .
 	"https://service.discoplus.de/frei/LOGIN";
@@ -168,7 +165,8 @@ public class ConnectorDiscotel extends Connector {
 				Preferences.PREFS_PASSWORD, "")));
 
 		HttpResponse response = Utils.getHttpClient(URL_DP_LOGIN, null, // .
-				postData, TARGET_AGENT, null, ENCODING, TRUSTED_CERTS);
+				postData, TARGET_AGENT, null, ENCODING, Preferences
+						.getTrustAll(p), TRUSTED_CERTS);
 		postData = null;
 		int resp = response.getStatusLine().getStatusCode();
 		if (resp != HttpURLConnection.HTTP_OK) {
@@ -197,7 +195,7 @@ public class ConnectorDiscotel extends Connector {
 
 		// update free balance
 		response = Utils.getHttpClient(URL_DP_SEND, null, null, TARGET_AGENT,
-				null, ENCODING, TRUSTED_CERTS);
+				null, ENCODING, Preferences.getTrustAll(p), TRUSTED_CERTS);
 
 		resp = response.getStatusLine().getStatusCode();
 		if (resp != HttpURLConnection.HTTP_OK) {
@@ -276,7 +274,8 @@ public class ConnectorDiscotel extends Connector {
 
 		HttpResponse response = Utils.getHttpClient(Utils.httpGetParams(
 				URL_DP_SEND, postData, ENCODING), null, null, TARGET_AGENT,
-				URL_DP_SEND, ENCODING, TRUSTED_CERTS);
+				URL_DP_SEND, ENCODING, Preferences.getTrustAll(context),
+				TRUSTED_CERTS);
 		postData = null;
 		final int resp = response.getStatusLine().getStatusCode();
 		if (resp != HttpURLConnection.HTTP_OK) {
@@ -320,7 +319,8 @@ public class ConnectorDiscotel extends Connector {
 				Preferences.PREFS_PASSWORD, "")));
 
 		HttpResponse response = Utils.getHttpClient(URL_DT_LOGIN, null, // .
-				postData, TARGET_AGENT, URL_DT_LOGIN, ENCODING, TRUSTED_CERTS);
+				postData, TARGET_AGENT, URL_DT_LOGIN, ENCODING, Preferences
+						.getTrustAll(p));
 		postData = null;
 		int resp = response.getStatusLine().getStatusCode();
 		if (resp != HttpURLConnection.HTTP_OK) {
@@ -387,7 +387,8 @@ public class ConnectorDiscotel extends Connector {
 				.cleanRecipient(command.getRecipients()[0])));
 
 		HttpResponse response = Utils.getHttpClient(URL_DT_SEND, null,
-				postData, TARGET_AGENT, URL_DT_SEND, ENCODING, TRUSTED_CERTS);
+				postData, TARGET_AGENT, URL_DT_SEND, ENCODING, Preferences
+						.getTrustAll(context));
 		postData = null;
 		final int resp = response.getStatusLine().getStatusCode();
 		if (resp != HttpURLConnection.HTTP_OK) {

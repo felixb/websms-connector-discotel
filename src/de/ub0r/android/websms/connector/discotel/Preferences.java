@@ -41,7 +41,9 @@ public final class Preferences extends ConnectorPreferenceActivity implements
 	/** Preference's name: user's password. */
 	static final String PREFS_PASSWORD = "password_discotel";
 	/** Preference's name: etelon service. */
-	static final String PRES_SERVICE = "etelon_service";
+	static final String PREFS_SERVICE = "etelon_service";
+	/** Preference's name: ignore SSL errors. */
+	private static final String PREFS_IGNORE_SSL_ERRORS = "ignore_ssl_error";
 
 	/**
 	 * {@inheritDoc}
@@ -50,7 +52,7 @@ public final class Preferences extends ConnectorPreferenceActivity implements
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.addPreferencesFromResource(R.xml.prefs);
-		Preference pref = this.findPreference(PRES_SERVICE);
+		Preference pref = this.findPreference(PREFS_SERVICE);
 		pref.setOnPreferenceChangeListener(this);
 		SharedPreferences p = PreferenceManager
 				.getDefaultSharedPreferences(this);
@@ -69,7 +71,7 @@ public final class Preferences extends ConnectorPreferenceActivity implements
 			final Object newValue) {
 		Log.d("dicotel.prefs", "key: " + preference.getKey());
 		Log.d("dicotel.prefs", "val: " + newValue);
-		if (preference.getKey().equals(PRES_SERVICE)) {
+		if (preference.getKey().equals(PREFS_SERVICE)) {
 			String s = (String) newValue;
 			this.findPreference(PREFS_USERNAME).setEnabled(
 					!s.contains("service.discoplus.de"));
@@ -98,6 +100,29 @@ public final class Preferences extends ConnectorPreferenceActivity implements
 	 * @return service
 	 */
 	static String getService(final SharedPreferences p) {
-		return p.getString(Preferences.PRES_SERVICE, "service.discoplus.de");
+		return p.getString(Preferences.PREFS_SERVICE, "service.discoplus.de");
+	}
+
+	/**
+	 * Trust all SSL certificates?
+	 * 
+	 * @param context
+	 *            {@link Context}
+	 * @return true, for trusting all certificates
+	 */
+	static boolean getTrustAll(final Context context) {
+		return getTrustAll(PreferenceManager
+				.getDefaultSharedPreferences(context));
+	}
+
+	/**
+	 * Trust all SSL certificates?
+	 * 
+	 * @param p
+	 *            {@link SharedPreferences}
+	 * @return true, for trusting all certificates
+	 */
+	static boolean getTrustAll(final SharedPreferences p) {
+		return p.getBoolean(PREFS_IGNORE_SSL_ERRORS, false);
 	}
 }
