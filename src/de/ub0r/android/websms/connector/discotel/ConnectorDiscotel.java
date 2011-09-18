@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
 
+import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.message.BasicNameValuePair;
 
@@ -148,6 +149,7 @@ public class ConnectorDiscotel extends Connector {
 	 */
 	private void dpDoLogin(final Context context, // .
 			final ConnectorCommand command) throws IOException {
+		Log.d(TAG, "dpDoLogin()");
 		final SharedPreferences p = PreferenceManager
 				.getDefaultSharedPreferences(context);
 
@@ -178,6 +180,16 @@ public class ConnectorDiscotel extends Connector {
 		Log.d(TAG, "----HTTP RESPONSE---");
 
 		if (!htmlText.contains(CHECK_DP_LOGIN)) {
+			Log.e(TAG, "HTTP Status Line: "
+					+ response.getStatusLine().toString());
+			Log.e(TAG, "HTTP Headers:");
+			for (Header h : response.getAllHeaders()) {
+				Log.e(TAG, h.getName() + ": " + h.getValue());
+			}
+			Log.e(TAG, "HTTP Body:");
+			for (String l : htmlText.split("\n")) {
+				Log.e(TAG, l);
+			}
 			Utils.clearCookies();
 			throw new WebSMSException(context, R.string.error_pw);
 		}
@@ -199,6 +211,16 @@ public class ConnectorDiscotel extends Connector {
 
 		resp = response.getStatusLine().getStatusCode();
 		if (resp != HttpURLConnection.HTTP_OK) {
+			Log.e(TAG, "HTTP Status Line: "
+					+ response.getStatusLine().toString());
+			Log.e(TAG, "HTTP Headers:");
+			for (Header h : response.getAllHeaders()) {
+				Log.e(TAG, h.getName() + ": " + h.getValue());
+			}
+			Log.e(TAG, "HTTP Body:");
+			for (String l : htmlText.split("\n")) {
+				Log.e(TAG, l);
+			}
 			Utils.clearCookies();
 			throw new WebSMSException(context, R.string.error_http, "" + resp);
 		}
@@ -209,6 +231,16 @@ public class ConnectorDiscotel extends Connector {
 
 		i = htmlText.indexOf(CHECK_DP_BALANCE2);
 		if (i < 0) {
+			Log.e(TAG, "HTTP Status Line: "
+					+ response.getStatusLine().toString());
+			Log.e(TAG, "HTTP Headers:");
+			for (Header h : response.getAllHeaders()) {
+				Log.e(TAG, h.getName() + ": " + h.getValue());
+			}
+			Log.e(TAG, "HTTP Body:");
+			for (String l : htmlText.split("\n")) {
+				Log.e(TAG, l);
+			}
 			Utils.clearCookies();
 			throw new WebSMSException(context, R.string.error);
 		}
@@ -247,6 +279,7 @@ public class ConnectorDiscotel extends Connector {
 	 */
 	private void dpSendText(final Context context,
 			final ConnectorCommand command) throws IOException {
+		Log.d(TAG, "dpSendText()");
 		final int cc = Utils.getCookieCount();
 		if (cc == 0) {
 			this.dpDoLogin(context, command);
@@ -289,7 +322,16 @@ public class ConnectorDiscotel extends Connector {
 		final int i = htmlText.indexOf(CHECK_DP_SENT);
 		if (i < 0) {
 			Log.e(TAG, "failed to send message, response following:");
-			Log.e(TAG, htmlText);
+			Log.e(TAG, "HTTP Status Line: "
+					+ response.getStatusLine().toString());
+			Log.e(TAG, "HTTP Headers:");
+			for (Header h : response.getAllHeaders()) {
+				Log.e(TAG, h.getName() + ": " + h.getValue());
+			}
+			Log.e(TAG, "HTTP Body:");
+			for (String l : htmlText.split("\n")) {
+				Log.e(TAG, l);
+			}
 			throw new WebSMSException(context, R.string.error);
 		}
 	}
@@ -306,6 +348,7 @@ public class ConnectorDiscotel extends Connector {
 	 */
 	private void dtDoLogin(final Context context, // .
 			final ConnectorCommand command) throws IOException {
+		Log.d(TAG, "dtDoLogin()");
 		final SharedPreferences p = PreferenceManager
 				.getDefaultSharedPreferences(context);
 
@@ -332,6 +375,16 @@ public class ConnectorDiscotel extends Connector {
 		Log.d(TAG, "----HTTP RESPONSE---");
 
 		if (!htmlText.contains(CHECK_DT_LOGIN)) {
+			Log.e(TAG, "HTTP Status Line: "
+					+ response.getStatusLine().toString());
+			Log.e(TAG, "HTTP Headers:");
+			for (Header h : response.getAllHeaders()) {
+				Log.e(TAG, h.getName() + ": " + h.getValue());
+			}
+			Log.e(TAG, "HTTP Body:");
+			for (String l : htmlText.split("\n")) {
+				Log.e(TAG, l);
+			}
 			Utils.clearCookies();
 			throw new WebSMSException(context, R.string.error_pw);
 		}
@@ -363,6 +416,7 @@ public class ConnectorDiscotel extends Connector {
 	 */
 	private void dtSendText(final Context context,
 			final ConnectorCommand command) throws IOException {
+		Log.d(TAG, "dtSendText()");
 		if (command.getText().length() > MAXLENGTH) {
 			throw new WebSMSException(context, R.string.error_length_101);
 		}
@@ -402,8 +456,16 @@ public class ConnectorDiscotel extends Connector {
 		final int i = htmlText.indexOf(CHECK_DT_SENT);
 		if (i < 0) {
 			Log.e(TAG, "failed to send message, response following:");
-			Log.e(TAG, htmlText);
-			System.out.println(htmlText);
+			Log.e(TAG, "HTTP Status Line: "
+					+ response.getStatusLine().toString());
+			Log.e(TAG, "HTTP Headers:");
+			for (Header h : response.getAllHeaders()) {
+				Log.e(TAG, h.getName() + ": " + h.getValue());
+			}
+			Log.e(TAG, "HTTP Body:");
+			for (String l : htmlText.split("\n")) {
+				Log.e(TAG, l);
+			}
 			throw new WebSMSException(context, R.string.error);
 		}
 	}
