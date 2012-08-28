@@ -34,10 +34,11 @@ import android.text.TextUtils;
 import de.ub0r.android.websms.connector.common.Connector;
 import de.ub0r.android.websms.connector.common.ConnectorCommand;
 import de.ub0r.android.websms.connector.common.ConnectorSpec;
+import de.ub0r.android.websms.connector.common.ConnectorSpec.SubConnectorSpec;
 import de.ub0r.android.websms.connector.common.Log;
 import de.ub0r.android.websms.connector.common.Utils;
+import de.ub0r.android.websms.connector.common.Utils.HttpOptions;
 import de.ub0r.android.websms.connector.common.WebSMSException;
-import de.ub0r.android.websms.connector.common.ConnectorSpec.SubConnectorSpec;
 
 /**
  * AsyncTask to manage IO to discotel.com API.
@@ -107,7 +108,7 @@ public class ConnectorDiscotel extends Connector {
 		final String name = context.getString(R.string.connector_discotel_name);
 		ConnectorSpec c = new ConnectorSpec(name);
 		c.setAuthor(// .
-				context.getString(R.string.connector_discotel_author));
+		context.getString(R.string.connector_discotel_author));
 		c.setBalance(null);
 		c.setCapabilities(ConnectorSpec.CAPABILITIES_UPDATE
 				| ConnectorSpec.CAPABILITIES_SEND
@@ -166,9 +167,13 @@ public class ConnectorDiscotel extends Connector {
 		postData.add(new BasicNameValuePair("credential_1", p.getString(
 				Preferences.PREFS_PASSWORD, "")));
 
-		HttpResponse response = Utils.getHttpClient(URL_DP_LOGIN, null, // .
-				postData, TARGET_AGENT, null, ENCODING, Preferences
-						.getTrustAll(p), TRUSTED_CERTS);
+		HttpOptions o = new HttpOptions(ENCODING);
+		o.addFormParameter(postData);
+		o.userAgent = TARGET_AGENT;
+		o.trustAll = Preferences.getTrustAll(p);
+		o.knownFingerprints = TRUSTED_CERTS;
+		o.url = URL_DP_LOGIN;
+		HttpResponse response = Utils.getHttpClient(o);
 		postData = null;
 		int resp = response.getStatusLine().getStatusCode();
 		if (resp != HttpURLConnection.HTTP_OK) {
@@ -206,8 +211,12 @@ public class ConnectorDiscotel extends Connector {
 		}
 
 		// update free balance
-		response = Utils.getHttpClient(URL_DP_SEND, null, null, TARGET_AGENT,
-				null, ENCODING, Preferences.getTrustAll(p), TRUSTED_CERTS);
+		o = new HttpOptions(ENCODING);
+		o.userAgent = TARGET_AGENT;
+		o.trustAll = Preferences.getTrustAll(p);
+		o.knownFingerprints = TRUSTED_CERTS;
+		o.url = URL_DP_SEND;
+		response = Utils.getHttpClient(o);
 
 		resp = response.getStatusLine().getStatusCode();
 		if (resp != HttpURLConnection.HTTP_OK) {
@@ -305,10 +314,14 @@ public class ConnectorDiscotel extends Connector {
 		postData.add(new BasicNameValuePair("action", ""));
 		postData.add(new BasicNameValuePair("unteraction", "abschicken"));
 
-		HttpResponse response = Utils.getHttpClient(Utils.httpGetParams(
-				URL_DP_SEND, postData, ENCODING), null, null, TARGET_AGENT,
-				URL_DP_SEND, ENCODING, Preferences.getTrustAll(context),
-				TRUSTED_CERTS);
+		HttpOptions o = new HttpOptions(ENCODING);
+		o.addFormParameter(postData);
+		o.userAgent = TARGET_AGENT;
+		o.trustAll = Preferences.getTrustAll(context);
+		o.knownFingerprints = TRUSTED_CERTS;
+		o.referer = URL_DP_SEND;
+		o.url = URL_DP_SEND;
+		HttpResponse response = Utils.getHttpClient(o);
 		postData = null;
 		final int resp = response.getStatusLine().getStatusCode();
 		if (resp != HttpURLConnection.HTTP_OK) {
@@ -361,9 +374,14 @@ public class ConnectorDiscotel extends Connector {
 		postData.add(new BasicNameValuePair("password", p.getString(
 				Preferences.PREFS_PASSWORD, "")));
 
-		HttpResponse response = Utils.getHttpClient(URL_DT_LOGIN, null, // .
-				postData, TARGET_AGENT, URL_DT_LOGIN, ENCODING, Preferences
-						.getTrustAll(p));
+		HttpOptions o = new HttpOptions(ENCODING);
+		o.addFormParameter(postData);
+		o.userAgent = TARGET_AGENT;
+		o.trustAll = Preferences.getTrustAll(p);
+		o.knownFingerprints = TRUSTED_CERTS;
+		o.referer = URL_DT_LOGIN;
+		o.url = URL_DT_LOGIN;
+		HttpResponse response = Utils.getHttpClient(o);
 		postData = null;
 		int resp = response.getStatusLine().getStatusCode();
 		if (resp != HttpURLConnection.HTTP_OK) {
@@ -440,9 +458,14 @@ public class ConnectorDiscotel extends Connector {
 		postData.add(new BasicNameValuePair("receiver", Utils
 				.cleanRecipient(command.getRecipients()[0])));
 
-		HttpResponse response = Utils.getHttpClient(URL_DT_SEND, null,
-				postData, TARGET_AGENT, URL_DT_SEND, ENCODING, Preferences
-						.getTrustAll(context));
+		HttpOptions o = new HttpOptions(ENCODING);
+		o.addFormParameter(postData);
+		o.userAgent = TARGET_AGENT;
+		o.trustAll = Preferences.getTrustAll(context);
+		o.knownFingerprints = TRUSTED_CERTS;
+		o.referer = URL_DT_SEND;
+		o.url = URL_DT_SEND;
+		HttpResponse response = Utils.getHttpClient(o);
 		postData = null;
 		final int resp = response.getStatusLine().getStatusCode();
 		if (resp != HttpURLConnection.HTTP_OK) {
