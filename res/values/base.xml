@@ -17,7 +17,7 @@
 		not, see <http://www.gnu.org/licenses/>.
 	-->
 <resources>
-	<string-array name="services">
+	<string-array name="services" translatable="false">
 		<item>https://service.discoplus.de</item>
 		<item>https://lounge.discoplus.de</item>
 	</string-array>

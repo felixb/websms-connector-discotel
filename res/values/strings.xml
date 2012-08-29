@@ -17,10 +17,9 @@
 		not, see <http://www.gnu.org/licenses/>.
 	-->
 <resources>
-	<string name="app_name">WebSMS Connector: discotel</string>
-	<string name="app_version">1.2</string>
-	<string name="connector_discotel_author">Felix Bechstein &lt;f@ub0r.de&gt;</string>
-	<string name="connector_discotel_name">discotel</string>
+	<string name="app_name" translatable="false">WebSMS Connector: discotel</string>
+	<string name="connector_discotel_author" translatable="false">Felix Bechstein &lt;f@ub0r.de&gt;</string>
+	<string name="connector_discotel_name" translatable="false">discotel</string>
 	<string name="enable_discotel">Enable discotel</string>
 	<string name="settings_discotel">Preferences - discotel</string>
 	<string name="use_default_for_login_">Login with default</string>
@@ -28,7 +27,7 @@
 	<string name="etelon_service_">etelon service</string>
 	<string name="etelon_service_hint">Select your etelon service.</string>
 	<string name="error_length_101">Only 101 characters allowed!</string>
-	<string-array name="services_">
+	<string-array name="services_" translatable="false">
 		<item>Discoplus: service.discoplus.de</item>
 		<item>Discotel: lounge.discoplus.de</item>
 	</string-array>
