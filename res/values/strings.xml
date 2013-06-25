@@ -17,11 +17,11 @@
 		not, see <http://www.gnu.org/licenses/>.
 	-->
 <resources>
-	<string name="app_name" translatable="false">WebSMS Connector: discotel</string>
+	<string name="app_name" translatable="false">WebSMS Connector: discoplus</string>
 	<string name="connector_discotel_author" translatable="false">Felix Bechstein &lt;f@ub0r.de&gt;</string>
-	<string name="connector_discotel_name" translatable="false">discotel</string>
-	<string name="enable_discotel">Enable discotel</string>
-	<string name="settings_discotel">Preferences - discotel</string>
+	<string name="connector_discotel_name" translatable="false">discoplus</string>
+	<string name="enable_discotel">Enable discoplus</string>
+	<string name="settings_discotel">Preferences - discoplus</string>
 	<string name="use_default_for_login_">Login with default</string>
 	<string name="use_default_for_login_hint">Use default number for login.</string>
 	<string name="etelon_service_">etelon service</string>
